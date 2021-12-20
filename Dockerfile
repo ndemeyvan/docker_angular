@@ -1,23 +1,23 @@
 # STAGE 1 : CREE L"IMAGE DE L'APPLICATION NODEJS
 # Mon conteneur va etre cree a partir de quel image ?
 # From an nodejs image
-FROM node:15.4 as build
+FROM node:16.10 as build
 # ICI JE PRECISE LE FICHIER QUI VA ETRE EXECUTE
 WORKDIR /app
 # ICI JE COPIE LE PACKAGE.JSON DANS LE CONTAINER DANS LE FICHIER /app
 # L'ETOILE DIT COPY TOUT CE QUI EST DANS LE REPERTOIRE AVEC LE MOT CLE PACKAGE.<NOM DU PACKAGE>.JSON
-COPY package*.json ./app
+COPY package*.json .
 # LANCE LA COMMANDE npm INSTALL, NPM SERA DURECTEMENT INSTALLER DANS LE CONTAINER VU QUE C'EST UNE IMAGE NODEJS
 RUN npm install
 # COPIE TOUT LES FICHIER DE NODE_MODULES DANS LE CONTAINER DANS LE REPERTOIRE /app
-COPY . /app
+COPY . .
 # LANCE LA COMMANDE npm RUN BUILD , VA CREER LE FICHIER DE BUILD DE L'APPLICATION
 # Add --PROD "prod": "ng build --prod", in package.json to build in production
-RUN npm run prod 
+RUN npm run prod
 
 # CREE UN AUTRE CONTAINER POUR L'APPLICATION A PARTIR DE L'IMAGE NGINX
 FROM nginx
 # COPY NGINX.CONF DANS LE CONTAINER
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 # COPY LE FICHIER DE BUILD DANS LE CONTAINER , DANS LE WORKING DIRECTORY
-COPY --from=build /app/dist/angular_app /usr/share/nginx/html
+COPY --from=build /app/dist/angular_app/ /usr/share/nginx/html
